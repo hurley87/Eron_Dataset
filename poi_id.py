@@ -2,7 +2,7 @@
 
 import sys
 import pickle
-sys.path.append("../tools/")
+sys.path.append("./tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
@@ -15,7 +15,8 @@ features_list = ['poi','salary', 'to_messages'] # You will need to use more feat
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
-    print data_dict
+    print 'Total number of data points:'
+    print len(data_dict.keys())
 
 ### Task 2: Remove outliers
 ### Task 3: Create new feature(s)
