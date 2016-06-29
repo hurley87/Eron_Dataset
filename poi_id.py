@@ -58,7 +58,7 @@ def featureOutliers(data_dict, feature, amount):
 
 	return (sorted(outliers, key=lambda x:x[1], reverse=True)[:amount])
 
-# viewScatter(data, features)
+viewScatter(data, features)
 
 print 'Salary outlier:'
 # print top salary
@@ -69,7 +69,7 @@ data_dict.pop('TOTAL', 0)
 data = featureFormat(data_dict, features)
 
 # view data again
-# viewScatter(data, features)
+viewScatter(data, features)
 print 'Salary outliers'
 
 # top 3 salaries
@@ -78,8 +78,9 @@ print featureOutliers(data_dict, 'salary', 3)
 
 ### Task 3: Create new feature(s)
 
+# create new features from to_messages and from_messages
 features = ["pois", "to_messages", "from_messages"]
-# viewScatter(data, features)
+viewScatter(data, features)
 
 # use this to create new 
 def new_list(key, attribute):
@@ -93,9 +94,7 @@ def new_list(key, attribute):
 
     return new_list
 
-
-
-# create new features,ratio of emails from and to a POI
+# create new features, ratio of emails from and to a POI
 ratio_from_poi = new_list("from_poi_to_this_person", "to_messages")
 ratio_to_poi = new_list("from_this_person_to_poi", "from_messages")
 
@@ -115,11 +114,10 @@ my_dataset = data_dict
 data = featureFormat(my_dataset, features_list)
 labels, features = targetFeatureSplit(data)
 
-# viewScatter(data, features)
+viewScatter(data, features)
 
 
 ### Task 4: Try a varity of classifiers
-
 def run_classifiers(features_list):
 	data = featureFormat(my_dataset, features_list)
 	labels, features = targetFeatureSplit(data)   
@@ -128,7 +126,7 @@ def run_classifiers(features_list):
 	features_train, features_test, labels_train, labels_test = \
 		cross_validation.train_test_split(features, labels, test_size=0.1, random_state=42)
 
-	### try Naive Bayes for prediction
+	# try Naive Bayes
 	print '\nGaussianNB'
 	clf = GaussianNB()
 	clf.fit(features_train, labels_train)
@@ -138,6 +136,7 @@ def run_classifiers(features_list):
 	print 'precision = ', precision_score(labels_test,pred)
 	print 'recall = ', recall_score(labels_test,pred)
 
+	# try Decision Tree
 	print '\nDecisionTreeClassifier'
 	clf = DecisionTreeClassifier(min_samples_split=6)
 	clf.fit(features_train,labels_train)
@@ -167,24 +166,28 @@ features_list = ["poi", "ratio_from_poi", "ratio_to_poi", 'salary',
 
 clf = run_classifiers(features_list)
 
+# take important features from first iteration
 print '\nsecond iteration'
 features_list = ["poi", "ratio_from_poi", 'salary','total_payments', 'deferred_income', 
 				'total_stock_value', 'expenses', 'long_term_incentive']
 
 clf = run_classifiers(features_list)
 
+# take important features from second iteration
 print '\nthird iteration'
 features_list = ["poi", 'salary','total_payments', 'deferred_income', 
 				'total_stock_value', 'expenses']
 
 clf = run_classifiers(features_list)
 
+# take important features from third iteration
 print '\nfourth iteration'
 features_list = ["poi", 'salary','total_payments', 'deferred_income', 
 				'total_stock_value', 'expenses']
 
 clf = run_classifiers(features_list)
-		
+
+# take important features from fourth iteration	
 print '\nfifth iteration'
 features_list = ["poi", 'salary','total_payments', 'deferred_income']
 
@@ -198,13 +201,22 @@ features_list = ["poi", 'ratio_to_poi', 'shared_receipt_with_poi', 'ratio_from_p
 data = featureFormat(my_dataset, features_list)
 labels, features = targetFeatureSplit(data)  
 
-
 from sklearn import cross_validation
 features_train, features_test, labels_train, labels_test = \
 	cross_validation.train_test_split(features, labels, test_size=0.3, random_state=42)	
 
-# try different min_samples_split to see the effect on accuracy, precision and recall
-for i in range(4):
+# check results of new features
+clf = DecisionTreeClassifier()
+clf.fit(features_train,labels_train)
+score = clf.score(features_test,labels_test)
+pred = clf.predict(features_test)
+print '\nDecision Tree accuracy', score
+print 'precision = ', precision_score(labels_test, pred)
+print 'recall = ', recall_score(labels_test,pred)	
+print '\n'
+
+# tune by selecting different min_samples_split to see the effect on accuracy, precision and recall
+for i in range(6):
 	print i
 	clf = DecisionTreeClassifier(min_samples_split=i+1)
 	clf.fit(features_train,labels_train)
@@ -234,8 +246,9 @@ print 'precision after tuning ', precision_score(labels_test,pred)
 print 'recall after tuning ', recall_score(labels_test,pred)
 
 
+# try KFold with tuning applied
 print '\n '
-clf = DecisionTreeClassifier(min_samples_split=3, criterion='entropy')
+clf = DecisionTreeClassifier(min_samples_split=3)
 clf.fit(features_train,labels_train)
 score = clf.score(features_test,labels_test)
 print 'accuracy after tuning ', score
