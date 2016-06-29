@@ -1,8 +1,10 @@
 (lp0
 S'poi'
 p1
-aS'salary'
+aS'ratio_to_poi'
 p2
-aS'to_messages'
+aS'shared_receipt_with_poi'
 p3
+aS'ratio_from_poi'
+p4
 a.
