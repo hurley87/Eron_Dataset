@@ -98,7 +98,9 @@ Right away I saw an improvement in accuracy which was encouraging but recall was
 	recall =  0.5
 
 ## Validate and Evaluate 
-As I said before I used KFold to split and validate the algorithm which had percision and recall above 3. There was certainly an inprovement in accurancy after tuning which you see below,
+As I said before I used KFold to split and validate the algorithm which had percision and recall above 3. Validating with KFold was really important here because my initial algorithm did not generalize well and lead me to go back and find new features.
+
+ After tuning with the new features there was certainly an inprovement in accurancy,
 
 	accuracy before tuning  0.857142857143
 	precision after tuning  0.4
